@@ -1,4 +1,6 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿do
+{
+    Console.WriteLine("Enter the name of the file you want to read:");
 
 
+} while()
