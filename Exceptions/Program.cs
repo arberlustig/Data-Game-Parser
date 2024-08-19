@@ -64,8 +64,9 @@ public class datagameparser
                 }
                 catch (JsonException ex)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Something is wrong with the JSON File. Maybe wrong format?", ex.Message);
-                    throw;
+                    Console.ResetColor();
                 }
 
             }
