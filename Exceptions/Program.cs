@@ -1,15 +1,30 @@
 ﻿using Exceptions.Extensions;
+using System.Reflection.Metadata;
 using System.Text.Json;
+using System.Linq;
+using System.Threading.Channels;
 
 
 datagameparser juststart = new datagameparser();
 juststart.mainMenu();
 Console.ReadKey();
 
+
+public class MyCustomException : Exception
+{
+    public MyCustomException() { }
+
+    public MyCustomException(string message) : base(message) { }
+
+    public MyCustomException(string message, Exception inner) : base(message, inner) { }
+}
+
+
 public class datagameparser
 {
 
     public bool success;
+    public string userInput;
 
     public void mainMenu()
     {
@@ -18,30 +33,43 @@ public class datagameparser
 
 
             Console.WriteLine("Enter the name of the file you want to read:");
-            string userInput = Console.ReadLine();
 
             try
             {
-                var jsonAsString = File.ReadAllText(userInput);
-                List<Game> jsonList = JsonSerializer.Deserialize<List<Game>>(jsonAsString);
+               userInput = Console.ReadLine();
+            }
+           catch(ArgumentException)
+            {
 
-                foreach(Game spiel in jsonList)
+            }
+
+
+            if (!string.IsNullOrWhiteSpace(userInput))
                 {
-                    Console.WriteLine($"Loaded games are... Title: {spiel.Title} || Release Year: {spiel.ReleaseYear} || Rating: {spiel.Rating}");
+
+
+                try
+                {
+                    var jsonAsString = File.ReadAllText(userInput);
+                    List<Game> jsonList = JsonSerializer.Deserialize<List<Game>>(jsonAsString);
+                    jsonList.giveOutputFromList();
+
                 }
+                catch (FileNotFoundException ex)
+                {
+                    Console.WriteLine("File was not found", ex.Message);
 
-            }
-            catch (FileNotFoundException ex)
-            {
-                Console.WriteLine("File was not found", ex.Message);
+                }
+                catch (JsonException ex)
+                {
+                    Console.WriteLine("Something is wrong with the JSON File. Maybe wrong format?", ex.Message);
+                    throw;
+                }
+                catch ()
+                {
 
+                }
             }
-            catch (JsonException ex)
-            {
-                Console.WriteLine("Something is wrong with the JSON File. Maybe wrong format?", ex.Message);
-                throw;
-            }
-
 
 
             success = userInput.checkIfReal();
@@ -69,3 +97,4 @@ public class Game
     public double Rating { get; set; }
 
 }
+

@@ -17,6 +17,13 @@ namespace Exceptions.Extensions
             return false;
         }
 
+        public static void giveOutputFromList(this List<Game> liste)
+        {
+            foreach (Game spiel in liste)
+            {
+                Console.WriteLine($"Loaded games are... Title: {spiel.Title} || Release Year: {spiel.ReleaseYear} || Rating: {spiel.Rating}");
+            }
+        }
 
 
 
