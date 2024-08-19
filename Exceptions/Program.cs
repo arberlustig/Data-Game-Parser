@@ -10,20 +10,13 @@ juststart.mainMenu();
 Console.ReadKey();
 
 
-public class MyCustomException : Exception
-{
-    public MyCustomException() { }
-
-    public MyCustomException(string message) : base(message) { }
-
-    public MyCustomException(string message, Exception inner) : base(message, inner) { }
-}
 
 
 public class datagameparser
 {
     public bool success;
     public string userInput;
+    public string userChoice;
 
     public void mainMenu()
     {
@@ -31,7 +24,7 @@ public class datagameparser
         {
             try
             {
-                Console.WriteLine("Enter the name of the file you want to read:");
+                Console.WriteLine("Enter the name of the file you want to read or to edit:");
                 userInput = Console.ReadLine();
 
                 if (string.IsNullOrWhiteSpace(userInput))
@@ -41,8 +34,17 @@ public class datagameparser
 
                 var jsonAsString = File.ReadAllText(userInput);
                 List<Game> jsonList = JsonSerializer.Deserialize<List<Game>>(jsonAsString);
-                jsonList.giveOutputFromList();
+                Console.WriteLine("Do you want to add some games to the list? [Y]es or [N]o)");
+                userChoice = Console.ReadLine();
+                if (userChoice == "N")
+                {
+                    jsonList.giveOutputFromList();
 
+                }
+                else if(userChoice == "Y")
+                {
+                    Console.WriteLine("Enter your title of the game");
+                }
                 success = userInput.checkIfReal();
             }
             catch (MyCustomException ex)
@@ -58,6 +60,7 @@ public class datagameparser
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("File was not found: " + ex.Message);
                 Console.ResetColor();
+                //File.Create("logfile.txt").Close();
                 "logfile.txt".logFile(ex);
                 success = false;
             }
