@@ -25,6 +25,20 @@ namespace Exceptions.Extensions
             }
         }
 
+        public static void logFile(this string filepath, Exception ex)
+        {
+            if (!(File.Exists(filepath)))
+            {
+                string textdatei = $"{DateTime.Now} || {ex.Message.ToString()}";
+                File.WriteAllText(filepath, textdatei);
+            }
+            else
+            {
+                string textdatei = $"{DateTime.Now} || {ex.Message.ToString()} \n";
+                File.AppendAllText(filepath, textdatei);
+            }
+        }
+
 
 
 
