@@ -22,7 +22,6 @@ public class MyCustomException : Exception
 
 public class datagameparser
 {
-
     public bool success;
     public string userInput;
 
@@ -30,74 +29,52 @@ public class datagameparser
     {
         do
         {
-
-
-            Console.WriteLine("Enter the name of the file you want to read:");
-
-
-            userInput = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(userInput))
+            try
             {
-                var exception1 = new MyCustomException("No empty input mate!");
-                exception1.Message.ToString();
-                "logfile.txt".logFile(exception1);
+                Console.WriteLine("Enter the name of the file you want to read:");
+                userInput = Console.ReadLine();
 
-                throw exception1;
+                if (string.IsNullOrWhiteSpace(userInput))
+                {
+                    throw new MyCustomException("No empty input mate!");
+                }
 
+                var jsonAsString = File.ReadAllText(userInput);
+                List<Game> jsonList = JsonSerializer.Deserialize<List<Game>>(jsonAsString);
+                jsonList.giveOutputFromList();
+
+                success = userInput.checkIfReal();
             }
-
-
-
-
-            if (!string.IsNullOrWhiteSpace(userInput))
+            catch (MyCustomException ex)
             {
-
-
-                try
-                {
-                    var jsonAsString = File.ReadAllText(userInput);
-                    List<Game> jsonList = JsonSerializer.Deserialize<List<Game>>(jsonAsString);
-                    jsonList.giveOutputFromList();
-
-                }
-                catch (FileNotFoundException ex)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("File was not found", ex.Message);
-                    Console.ResetColor();
-                    //File.Create("logfile.txt").Close();
-                    "logfile.txt".logFile(ex);
-
-
-                }
-                catch (JsonException ex)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Something is wrong with the JSON File. Maybe wrong format?", ex.Message);
-                    Console.ResetColor();
-                    "logfile.txt".logFile(ex);
-                }
-
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(ex.Message);
+                Console.ResetColor();
+                "logfile.txt".logFile(ex);
+                success = false;
             }
-
-
-            success = userInput.checkIfReal();
-            //if (success)
-            //    Console.WriteLine("Es ist da!");
-
-
-
-        } while (success == false);
+            catch (FileNotFoundException ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("File was not found: " + ex.Message);
+                Console.ResetColor();
+                "logfile.txt".logFile(ex);
+                success = false;
+            }
+            catch (JsonException ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Something is wrong with the JSON File. Maybe wrong format? " + ex.Message);
+                Console.ResetColor();
+                "logfile.txt".logFile(ex);
+                success = false;
+            }
+        } while (!success);
 
         Console.WriteLine("Press any key to close");
-
     }
-
-
-
-
-
 }
+
 
 
 public class Game
