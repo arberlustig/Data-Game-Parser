@@ -13,31 +13,44 @@ public class datagameparser
 
     public void mainMenu()
     {
-        //do
-        //{
+        do
+        {
 
 
             Console.WriteLine("Enter the name of the file you want to read:");
-            string? userInput = Console.ReadLine();
+            string userInput = Console.ReadLine();
+
             try
             {
-            var jsonString = JsonSerializer.Deserialize<List<string>>(userInput);
+                var jsonAsString = File.ReadAllText(userInput);
+                List<Game> jsonList = JsonSerializer.Deserialize<List<Game>>(jsonAsString);
+
+                foreach(Game spiel in jsonList)
+                {
+                    Console.WriteLine($"Loaded games are... Title: {spiel.Title} || Release Year: {spiel.ReleaseYear} || Rating: {spiel.Rating}");
+                }
 
             }
-            catch(FileNotFoundException ex)
+            catch (FileNotFoundException ex)
             {
-                Console.WriteLine("File wurde nicht gefunden", ex.Message);
+                Console.WriteLine("File was not found", ex.Message);
 
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine("Something is wrong with the JSON File. Maybe wrong format?", ex.Message);
+                throw;
             }
 
 
-            //success = userInput.checkIfReal();
+
+            success = userInput.checkIfReal();
             //if (success)
             //    Console.WriteLine("Es ist da!");
 
 
 
-        //} while (success == false);
+        } while (success == false);
 
         Console.ReadKey();
     }
@@ -51,7 +64,7 @@ public class datagameparser
 
 public class Game
 {
-    public string Title { get; set; }
+    public string? Title { get; set; }
     public int ReleaseYear { get; set; }
     public double Rating { get; set; }
 
