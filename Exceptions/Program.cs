@@ -34,18 +34,18 @@ public class datagameparser
 
             Console.WriteLine("Enter the name of the file you want to read:");
 
-            try
-            {
-               userInput = Console.ReadLine();
-            }
-           catch(ArgumentException)
-            {
+            
+                userInput = Console.ReadLine();
+                if(string.IsNullOrWhiteSpace(userInput))
+                {
+                    throw new MyCustomException("No empty input mate!");
+                }
 
-            }
+            
 
 
             if (!string.IsNullOrWhiteSpace(userInput))
-                {
+            {
 
 
                 try
@@ -57,7 +57,9 @@ public class datagameparser
                 }
                 catch (FileNotFoundException ex)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("File was not found", ex.Message);
+                    Console.ResetColor();
 
                 }
                 catch (JsonException ex)
@@ -65,10 +67,7 @@ public class datagameparser
                     Console.WriteLine("Something is wrong with the JSON File. Maybe wrong format?", ex.Message);
                     throw;
                 }
-                catch ()
-                {
 
-                }
             }
 
 
@@ -80,7 +79,8 @@ public class datagameparser
 
         } while (success == false);
 
-        Console.ReadKey();
+        Console.WriteLine("Press any key to close");
+        
     }
 
 
